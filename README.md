@@ -2,7 +2,7 @@
 
 **An AI agent that audits, explains and fixes data quality problems — with human approval and a measured accuracy benchmark.**
 
-🔗 **Live demo:** _coming soon_  
+🔗 **Live demo:** https://dataguard-ai-arpita.streamlit.app 
 👩‍💻 **Author:** Arpita Bhattacharjee, MSc Computer Science, Memorial University of Newfoundland
 
 ---
