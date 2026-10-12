@@ -1,0 +1,7 @@
+venv/
+key.env
+__pycache__/
+.ipynb_checkpoints/
+.streamlit/secrets.toml
+*.ipynb
+anaconda_projects/

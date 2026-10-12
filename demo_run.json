@@ -1,0 +1,105 @@
+{
+  "report": "### Data Quality Audit Report\n\n**What Is Wrong:**\nAcross the 918 records and 5 columns, we detected several data quality defects:\n* **18 duplicate rows** inflating record counts.\n* **18 formatted price strings** containing `$` symbols instead of numeric values.\n* **18 negative quantities** in `units_sold` (e.g., -226).\n* **18 invalid dates** (e.g., 2024-02-31) and **18 inconsistent city names** with irregular casing/spacing.\n* **18 missing cells** (4 in `city`, 8 in `price`, 6 in `units_sold`).\n* **22 outliers** (18 in `price`, 4 in `units_sold`) and **10 row anomalies**.\n\n**Why It Matters:**\nUncleaned currency formatting, negative sales volumes, and duplicates distort total revenue and inventory calculations, while invalid dates disrupt trend analysis and reporting pipelines.\n\n**Proposed Actions:**\n1. **Deduplicate & Format:** Remove the 18 duplicate rows, strip currency symbols to convert `price` to numeric, and standardize the 18 inconsistent city names.\n2. **Correct Values:** Convert 18 negative sales values to positive and set 18 invalid dates to missing for review.\n3. **Impute Missing:** Fill 4 missing city entries with the most common city, and impute missing `price` (8) and `units_sold` (6) using column medians.\n4. **Flag:** Flag the 22 outliers and 10 row anomalies for human inspection.",
+  "fixes": [
+    {
+      "issue_type": "anomaly",
+      "column": "(whole row)",
+      "action": "flag_only",
+      "affected": 10,
+      "reason": "Flag ML-detected row anomalies for human review to prevent accidental data loss."
+    },
+    {
+      "issue_type": "duplicate",
+      "column": "(whole row)",
+      "action": "drop_duplicate_rows",
+      "affected": 18,
+      "reason": "Remove exact duplicate rows to prevent double counting in analyses."
+    },
+    {
+      "issue_type": "inconsistent",
+      "column": "city",
+      "action": "standardize_category",
+      "affected": 18,
+      "reason": "Standardize case and whitespace variants of city names to the most common format."
+    },
+    {
+      "issue_type": "invalid_date",
+      "column": "date",
+      "action": "set_to_missing",
+      "affected": 18,
+      "reason": "Replace invalid date entries with empty values for later validation."
+    },
+    {
+      "issue_type": "missing",
+      "column": "city",
+      "action": "fill_with_most_common",
+      "affected": 4,
+      "reason": "Fill missing text entries in city with the most frequent city name."
+    },
+    {
+      "issue_type": "missing",
+      "column": "price",
+      "action": "fill_with_median",
+      "affected": 8,
+      "reason": "Fill missing price values using the column median."
+    },
+    {
+      "issue_type": "missing",
+      "column": "units_sold",
+      "action": "fill_with_median",
+      "affected": 6,
+      "reason": "Fill missing sales figures using the column median."
+    },
+    {
+      "issue_type": "negative",
+      "column": "units_sold",
+      "action": "make_positive",
+      "affected": 18,
+      "reason": "Convert negative unit sales to positive numbers."
+    },
+    {
+      "issue_type": "outlier",
+      "column": "price",
+      "action": "flag_only",
+      "affected": 18,
+      "reason": "Flag statistical price outliers for manual verification."
+    },
+    {
+      "issue_type": "outlier",
+      "column": "units_sold",
+      "action": "flag_only",
+      "affected": 4,
+      "reason": "Flag statistical units sold outliers for manual verification."
+    },
+    {
+      "issue_type": "wrong_type",
+      "column": "price",
+      "action": "convert_to_number",
+      "affected": 18,
+      "reason": "Strip currency symbols and convert price strings to numeric values."
+    }
+  ],
+  "log": [
+    "get_profile()",
+    "get_issue_summary()",
+    "get_issue_examples('anomaly')",
+    "get_issue_examples('duplicate')",
+    "get_issue_examples('inconsistent')",
+    "get_issue_examples('invalid_date')",
+    "get_issue_examples('missing')",
+    "get_issue_examples('negative')",
+    "get_issue_examples('outlier')",
+    "get_issue_examples('wrong_type')",
+    "propose_fix('anomaly', '', 'flag_only')",
+    "propose_fix('duplicate', '', 'drop_duplicate_rows')",
+    "propose_fix('inconsistent', 'city', 'standardize_category')",
+    "propose_fix('invalid_date', 'date', 'set_to_missing')",
+    "propose_fix('missing', 'city', 'fill_with_most_common')",
+    "propose_fix('missing', 'price', 'fill_with_median')",
+    "propose_fix('missing', 'units_sold', 'fill_with_median')",
+    "propose_fix('negative', 'units_sold', 'make_positive')",
+    "propose_fix('outlier', 'price', 'flag_only')",
+    "propose_fix('outlier', 'units_sold', 'flag_only')",
+    "propose_fix('wrong_type', 'price', 'convert_to_number')"
+  ]
+}
